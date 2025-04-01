@@ -1,34 +1,127 @@
-import static java.lang.Math.sqrt;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedList;
+
+import static java.lang.Math.abs;
+
 
 public class Disc {
-    public int discWidth, discHeight;
-    public boolean[][] disc = new boolean[discWidth][discHeight];
-    // 0 means no request, not no data. In this simulation the data inside disc doesnt matter, only the requests and head movement.
-    public double totalHeadMovement=0;
-    private int posX=0,posY=0;
+    public int discSize;
+    //public int totalHeadMovement;
+    private int headPos;
+    private int startingHeadPos;
+    private boolean direction = false;    // direction: left is false, right is true
 
-    public Disc(int x, int y) {
-        this.discWidth = x;
-        this.discHeight = y;
+    public Disc(int startingHeadPos, int discSize) {
+        this.startingHeadPos = startingHeadPos;
+        this.discSize = discSize;
+        headPos = startingHeadPos;
     }
 
-    public double distanceFromHead(int reqPosX, int reqPosY){
-        return sqrt(((reqPosX-posX)*(reqPosX-posX))+((reqPosY-posY)*(reqPosY-posY)));
+
+    public int distance(Request req) {
+        return abs(headPos - req.getReqPos());
     }
 
-    public int getPosX() {
-        return posX;
+    void resetDisc() {
+        headPos = startingHeadPos;
     }
 
-    public void setPosX(int posX) {
-        this.posX = posX;
+    public int FCFS(LinkedList<Request> sim, int totalHeadMovement) {
+
+        Iterator<Request> iterator = sim.iterator();
+        while (iterator.hasNext()) {
+            Request r = iterator.next();
+            totalHeadMovement += distance(r);
+            headPos = r.getReqPos();
+            System.out.println(headPos);
+            iterator.remove();
+        }
+
+        return totalHeadMovement;
     }
 
-    public int getPosY() {
-        return posY;
+    public int SSTF(LinkedList<Request> sim, int totalHeadMovement) {
+
+        sim.sort(Comparator.comparingInt(this::distance));
+        Request r = sim.getFirst();
+        totalHeadMovement += distance(r);
+        headPos = r.getReqPos();
+        sim.removeFirst();
+        System.out.println(headPos);
+
+        return totalHeadMovement;
     }
 
-    public void setPosY(int posY) {
-        this.posY = posY;
+    public int SCAN(LinkedList<Request> sim, int totalHeadMovement) {
+        // direction: left is false, right is true
+        Iterator<Request> it = sim.iterator();
+        while (it.hasNext()) {
+            Request r = it.next();
+            if (r.getReqPos() == headPos) {
+                System.out.println(headPos);
+                it.remove();
+            }
+        }
+        if (headPos == 1) { //the disc is numerated 1...N
+            direction = true;
+        }
+        if (headPos == discSize) {
+            direction = false;
+        }
+
+        if (direction) {
+            headPos++;
+        } else {
+            headPos--;
+        }
+
+        totalHeadMovement++;
+        return totalHeadMovement;
+    }
+
+    public int C_SCAN(LinkedList<Request> sim, int totalHeadMovement) {
+        //this C_SCAN implementation goes left to right
+        //direction: left is false, right is true
+
+        Iterator<Request> it = sim.iterator();
+        while (it.hasNext()) {
+            Request r = it.next();
+            if (r.getReqPos() == headPos) {
+                System.out.println(headPos);
+                it.remove(); //removal after finishing
+            }
+        }
+        if (headPos == discSize) {
+            headPos=1;
+            totalHeadMovement++; //assume the comeback costs only one movement
+        }
+        headPos++;
+        totalHeadMovement++;
+        return totalHeadMovement;
+    }
+
+    public int getHeadPos() {
+        return headPos;
+    }
+
+    public void setHeadPos(int headPos) {
+        this.headPos = headPos;
+    }
+
+    public int getStartingHeadPos() {
+        return startingHeadPos;
+    }
+
+    public void setStartingHeadPos(int startingHeadPos) {
+        this.startingHeadPos = startingHeadPos;
+    }
+
+    public boolean isDirection() {
+        return direction;
+    }
+
+    public void setDirection(boolean direction) {
+        this.direction = direction;
     }
 }
