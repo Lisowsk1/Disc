@@ -1,6 +1,4 @@
-import java.lang.annotation.Inherited;
-
-public class Request {
+public abstract class Request {
     private int reqPos;
     private final int arrivalTime;
 
@@ -21,8 +19,9 @@ public class Request {
         return arrivalTime;
     }
 
-    @Override
-    public String toString() {
-        return (reqPos+";"+arrivalTime);
+
+    public boolean isPriority() {
+        return false;
     }
+
 }
