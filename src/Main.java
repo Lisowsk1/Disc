@@ -21,17 +21,26 @@ public class Main {
 
     public static void main(String[] args) {
 
-        grandPlan.add(new Request(98, 0));
-        grandPlan.add(new Request(183, 0));
-        grandPlan.add(new Request(37, 0));
-        grandPlan.add(new Request(122, 0));
-        grandPlan.add(new Request(14, 0));
-        grandPlan.add(new Request(124, 0));
-        grandPlan.add(new Request(65, 0));
-        grandPlan.add(new Request(67, 0));
+        /*
+        grandPlan.add(new NormalRequest(98, 0));
+        grandPlan.add(new NormalRequest(183, 0));
+        grandPlan.add(new NormalRequest(37, 0));
+        grandPlan.add(new NormalRequest(122, 0));
+        grandPlan.add(new PriorityRequest(132,10,50));
+        grandPlan.add(new NormalRequest(14, 10));
+        grandPlan.add(new NormalRequest(124, 10));
+        grandPlan.add(new NormalRequest(65, 10));
+        grandPlan.add(new NormalRequest(67, 10));
 
 
-        Disc disc = new Disc(53, 200);
+         */
+        grandPlan.add(new NormalRequest(10,0));
+        grandPlan.add(new NormalRequest(20,5));
+        grandPlan.add(new PriorityRequest(50,5,50));
+
+
+
+        Disc disc = new Disc(0, 200);
 
         //the grandPlan is the original copy, for other algorithm to be tested on exactly the same data
         //plan is disposable for the sim to run efficiently
@@ -45,14 +54,17 @@ public class Main {
 
                 while (!plan.isEmpty()) {//the scenario loop, adds from plan to sim at their arrival times; disc movement is 1u of time
                     Request r = plan.getFirst();
+                    System.out.println(r.getReqPos());
                     if (r.getArrivalTime() <= totalHeadMovement) {
+                        if (r.isPriority()) {
+                            disc.setPriorityMode(true);
+                        }
                         sim.add(r);
                         plan.removeFirst(); //removes from plan for performance, there is no need to waste iterator on the requests that were processed
-
-                    } else break;
+                    }
+                    else break;
                 }
-
-                totalHeadMovement = disc.C_SCAN(sim, totalHeadMovement);
+                totalHeadMovement = disc.SSTF_Priority(sim, totalHeadMovement);
             }
             System.out.println("total head: " + totalHeadMovement);
 

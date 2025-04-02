@@ -10,7 +10,8 @@ public class Disc {
     //public int totalHeadMovement;
     private int headPos;
     private int startingHeadPos;
-    private boolean direction = false;    // direction: left is false, right is true
+    private boolean direction = false;// direction: left is false, right is true
+    private boolean priorityMode = false;
 
     public Disc(int startingHeadPos, int discSize) {
         this.startingHeadPos = startingHeadPos;
@@ -29,20 +30,34 @@ public class Disc {
 
     public int FCFS(LinkedList<Request> sim, int totalHeadMovement) {
 
-        Iterator<Request> iterator = sim.iterator();
-        while (iterator.hasNext()) {
-            Request r = iterator.next();
+        Iterator<Request> it = sim.iterator();
+        while (it.hasNext()) {
+            Request r = it.next();
             totalHeadMovement += distance(r);
             headPos = r.getReqPos();
             System.out.println(headPos);
-            iterator.remove();
+            it.remove();
         }
 
         return totalHeadMovement;
     }
 
-    public int SSTF(LinkedList<Request> sim, int totalHeadMovement) {
+    public int SSTF_nonPriority(LinkedList<Request> sim, int totalHeadMovement) {
 
+        sim.sort(Comparator.comparingInt(this::distance));
+        Request r = sim.getFirst();
+        totalHeadMovement += distance(r);
+        headPos = r.getReqPos();
+        sim.removeFirst();
+        System.out.println(headPos);
+
+        return totalHeadMovement;
+    }
+
+    public int SSTF_Priority(LinkedList<Request> sim, int totalHeadMovement) {
+        if (priorityMode) {
+            totalHeadMovement = EDF_priority(sim, totalHeadMovement);
+        }
         sim.sort(Comparator.comparingInt(this::distance));
         Request r = sim.getFirst();
         totalHeadMovement += distance(r);
@@ -93,13 +108,31 @@ public class Disc {
             }
         }
         if (headPos == discSize) {
-            headPos=1;
+            headPos = 1;
             totalHeadMovement++; //assume the comeback costs only one movement
         }
         headPos++;
         totalHeadMovement++;
         return totalHeadMovement;
     }
+
+    public int EDF_priority(LinkedList<Request> sim, int totalHeadMovement) {
+        sim.sort(Comparator.comparingInt(PriorityRequest::getDeadlineRequest));
+
+        Iterator<Request> it = sim.iterator();
+        while (it.hasNext()) {
+            Request r = it.next();
+            if (r.isPriority()) {
+                PriorityRequest pr = (PriorityRequest) r;
+                totalHeadMovement += distance(pr);
+                headPos = pr.getReqPos();
+                it.remove();
+            }
+        }
+        priorityMode = false;
+        return totalHeadMovement;
+    }
+
 
     public int getHeadPos() {
         return headPos;
@@ -123,5 +156,13 @@ public class Disc {
 
     public void setDirection(boolean direction) {
         this.direction = direction;
+    }
+
+    public boolean isPriorityMode() {
+        return priorityMode;
+    }
+
+    public void setPriorityMode(boolean priorityMode) {
+        this.priorityMode = priorityMode;
     }
 }
