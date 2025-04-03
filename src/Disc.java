@@ -24,7 +24,6 @@ public class Disc {
     private int c_scanJumpCount = 0;
     private int starvingThreshold = 18000;
     private int starvedRequests = 0;
-    private int Working =0;
 
 
     public Disc(int startingHeadPos, int discSize) throws IndexOutOfBoundsException {

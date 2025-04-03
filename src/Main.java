@@ -170,8 +170,6 @@ public class Main {
         }
         System.out.println("Total head movements: " + totalHeadMovement);
         System.out.println("Starved: " + disc.getStarvedRequests());
-        System.out.println("Working: " + disc.getWorking());
-
 
     }
 }
