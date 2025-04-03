@@ -18,7 +18,12 @@ public class Main {
     public static int time = 0;
 
     //TESTS
-
+    //TODO:
+    // test the algorithms (github incident): working, detection, starvation
+    // the arrival time has to be adjusted
+    // starving threshold has to be adjusted
+    // inline testing loop and metrics cout
+    // statistics
 
     // Global parameters
     public static final int NUM_REQUESTS = 5;
@@ -86,7 +91,7 @@ public class Main {
      * Test for SCAN weaknesses.
      * Simulates a steadily advancing head (from low to high) and, every 10th request,
      * spawns a new request just behind the head. The arrival times are coordinated with the
-     * head movement (time is measured in head movements).
+     * head movement.
      */
     public static void testSCANWeakness() {
         grandPlan.clear();
@@ -152,6 +157,7 @@ public class Main {
         // for (int i = 0; i <n; i++) { // to be continued for testing all of them in row
 
         time = 0;
+        //time purpose is to add requests at their arrival times, it increments after every 'updating' call of chosen algorithm
         while (!plan.isEmpty() || !sim.isEmpty()) {//main loop that updates functions ensuring all requests are completed by the end
             while (!plan.isEmpty()) {//the scenario loop, adds from plan to sim at their arrival times;
                 Request r = plan.getFirst();

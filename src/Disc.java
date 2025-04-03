@@ -7,9 +7,9 @@ import static java.lang.Math.abs;
 
 //Basic info:
 //All algorithms have priority handling using EDF, except FD_SCAN that has its own built in
-//Priority: when priority request is detected at arrival, it activates 'priorityMode' and the algorithm  checks if this mode is activated,
+//When priority request is detected at arrival, it activates 'priorityMode' and the algorithm  checks if this mode is activated,
 // if it is, then chosen priority request handling strategy is executed until it executes all priority requests, then rest consisting only of normal requests
-// are executed as normal by the chosen algorithm/
+// are executed as normal by the chosen algorithm. Priority requests can be treated as normal requests by removing the detection mechanism.
 //Starving is checked after moving head, the threshold is big enough that there is no need no modify algorithms to get exact head placement when request got starved,
 // also i assume the head doesnt know that process got starved if it doesnt look at it, so there is no check before moving head
 //The correction in scan-type algorithms comes from the fact that it increments at first iteration, but it should count moves, not sectors it has been to
@@ -329,11 +329,4 @@ public class Disc {
         this.starvedRequests = starvedRequests;
     }
 
-    public int getWorking() {
-        return Working;
-    }
-
-    public void setWorking(int working) {
-        this.Working = working;
-    }
 }
